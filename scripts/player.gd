@@ -11,9 +11,10 @@ extends CharacterBody3D
 # speed vars
 
 var current_speed = 5.0
-const walk_speed = 5.0
-const sprint_speed = 8.0
-const crouch_speed = 3.0
+
+@export var walk_speed = 5.0
+@export var sprint_speed = 8.0
+@export var crouch_speed = 3.0
 
 # movement vars
 const jump_velocity = 4.5
@@ -47,6 +48,8 @@ func _physics_process(delta):
 	# handle movement state
 	
 	#crouching
+
+	current_speed = walk_speed
 	
 	if Input.is_action_pressed("Crouch") and is_on_floor():	
 		current_speed = crouch_speed
@@ -61,8 +64,8 @@ func _physics_process(delta):
 		
 	if Input.is_action_pressed("Sprint"):
 			current_speed = sprint_speed
-	else:
-			current_speed = walk_speed
+	
+	
 	
 	# Add the gravity.
 	if not is_on_floor():
