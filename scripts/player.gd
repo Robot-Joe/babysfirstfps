@@ -6,7 +6,7 @@ extends CharacterBody3D
 @onready var camera_3d: Camera3D = $Head/Camera3D
 @onready var standing_collision_shape: CollisionShape3D = $standing_collision_shape
 @onready var crouching_collision_shape: CollisionShape3D = $crouching_collision_shape
-@onready var ray_cast_3d: RayCast3D = $RayCast3D
+@onready var bonk_raycast: RayCast3D = $RayCast3D
 
 # speed vars
 
@@ -51,19 +51,19 @@ func _physics_process(delta):
 
 	current_speed = walk_speed
 	
-	if Input.is_action_pressed("Crouch") and is_on_floor():	
+	if Input.is_action_pressed("Sprint"):
+		current_speed = sprint_speed
+	if (Input.is_action_pressed("Crouch") or bonk_raycast.is_colliding()) and is_on_floor():	
 		current_speed = crouch_speed
 		head.position.y = lerp(head.position.y,1.8 + crouch_depth,delta*lerp_speed)
 		standing_collision_shape.disabled = true
 		crouching_collision_shape.disabled = false
-	elif !ray_cast_3d.is_colliding():
+	elif !bonk_raycast.is_colliding():
 	#standing
 		standing_collision_shape.disabled = false
 		crouching_collision_shape.disabled = true
 		head.position.y = lerp(head.position.y,1.8,delta*lerp_speed)
-		
-	if Input.is_action_pressed("Sprint"):
-			current_speed = sprint_speed
+	
 	
 	
 	
@@ -72,7 +72,7 @@ func _physics_process(delta):
 		velocity += get_gravity() * delta
 	
 	# Handle jump.
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and ! ray_cast_3d.is_colliding():
+	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and ! bonk_raycast.is_colliding():
 		velocity.y = jump_velocity
 
 	# Get the input direction and handle the movement/deceleration.
