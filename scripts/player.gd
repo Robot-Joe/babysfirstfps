@@ -7,6 +7,7 @@ extends CharacterBody3D
 @onready var standing_collision_shape: CollisionShape3D = $standing_collision_shape
 @onready var crouching_collision_shape: CollisionShape3D = $crouching_collision_shape
 @onready var bonk_raycast: RayCast3D = $RayCast3D
+@onready var animation_player: AnimationPlayer = $Head/Camera3D/AnimationPlayer
 
 # speed vars
 
@@ -18,10 +19,10 @@ var current_speed = 5.0
 
 # movement vars
 const jump_velocity = 4.5
-
 var lerp_speed = 10.0
-var air_lerp_speed = 3.0
+var air_lerp_speed = 1.5
 var crouch_depth = -0.5
+var last_velocity = Vector3.ZERO
 
 # head bob vars
 const bob_freq = 2.0
@@ -47,12 +48,12 @@ func _physics_process(delta):
 	
 	# handle movement state
 	
-	#crouching
-
-	current_speed = walk_speed
 	
-	if Input.is_action_pressed("Sprint"):
+	current_speed = walk_speed
+
+	if Input.is_action_pressed("Sprint") and is_on_floor():
 		current_speed = sprint_speed
+	#crouching
 	if (Input.is_action_pressed("Crouch") or bonk_raycast.is_colliding()) and is_on_floor():	
 		current_speed = crouch_speed
 		head.position.y = lerp(head.position.y,1.8 + crouch_depth,delta*lerp_speed)
@@ -64,9 +65,6 @@ func _physics_process(delta):
 		crouching_collision_shape.disabled = true
 		head.position.y = lerp(head.position.y,1.8,delta*lerp_speed)
 	
-	
-	
-	
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -74,7 +72,12 @@ func _physics_process(delta):
 	# Handle jump.
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and ! bonk_raycast.is_colliding():
 		velocity.y = jump_velocity
-
+		animation_player.play("Jump")
+	# Handle Landing
+	if is_on_floor():
+		if last_velocity.y < 0.0:
+			animation_player.play("Landing")
+		 
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
 	var input_dir := Input.get_vector("Left", "Right", "Forward", "Backward")
@@ -96,6 +99,8 @@ func _physics_process(delta):
 	
 	t_bob += delta * velocity.length() * float(is_on_floor())
 	camera_3d.transform.origin = _headbob(t_bob)
+	
+	last_velocity = velocity
 	
 	move_and_slide()
 	
