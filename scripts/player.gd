@@ -26,6 +26,11 @@ var air_lerp_speed = 1.5
 var crouch_depth = -0.5
 var last_velocity = Vector3.ZERO
 
+#head tilt vars
+var camera_tilt_left = 1.5
+var camera_tilt_right = -1.5
+var lerp_angle = 6
+
 # head bob vars
 const bob_freq = 2.0
 const bob_amp = 0.08
@@ -96,6 +101,16 @@ func _physics_process(delta):
 	else:
 		velocity.x = 0.0
 		velocity.z = 0.0
+	
+	#handle headtilt left & right
+	
+	if Input.is_action_pressed("Left"):
+		camera_3d.rotation.z = lerp(camera_3d.rotation.z, deg_to_rad(camera_tilt_left), delta * lerp_angle)
+	elif Input.is_action_pressed("Right"):
+		camera_3d.rotation.z = lerp(camera_3d.rotation.z, deg_to_rad(camera_tilt_right), delta * lerp_angle)
+	else:
+		camera_3d.rotation.z = lerp(camera_3d.rotation.z, deg_to_rad(0), delta * lerp_angle)
+	
 	
 	#handle headbob
 	
