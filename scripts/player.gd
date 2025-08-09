@@ -3,11 +3,13 @@ extends CharacterBody3D
 # player nodes
 
 @onready var head: Node3D = $Head
-@onready var camera_3d: Camera3D = $Head/Camera3D
+@onready var eyes: Node3D = $Head/Eyes
+@onready var camera_3d: Camera3D = $Head/Eyes/Camera3D
 @onready var standing_collision_shape: CollisionShape3D = $standing_collision_shape
 @onready var crouching_collision_shape: CollisionShape3D = $crouching_collision_shape
 @onready var bonk_raycast: RayCast3D = $RayCast3D
-@onready var animation_player: AnimationPlayer = $Head/Camera3D/AnimationPlayer
+@onready var animation_player: AnimationPlayer = $Head/Eyes/Camera3D/AnimationPlayer
+
 
 # speed vars
 
@@ -98,7 +100,7 @@ func _physics_process(delta):
 	#handle headbob
 	
 	t_bob += delta * velocity.length() * float(is_on_floor())
-	camera_3d.transform.origin = _headbob(t_bob)
+	eyes.transform.origin = _headbob(t_bob)
 	
 	last_velocity = velocity
 	
