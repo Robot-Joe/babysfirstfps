@@ -90,11 +90,11 @@ func _rotate_step_up_seperation_ray():
 	$StepUpSeparationRay_F.global_position.x = self.global_position.x + xz_f_ray_pos.x
 	$StepUpSeparationRay_F.global_position.z = self.global_position.z + xz_f_ray_pos.z
 	
-	var xz_l_ray_pos = xz_vel.rotated(Vector3(0,1.0,0), deg_to_rad(-50))
+	var xz_l_ray_pos = xz_f_ray_pos.rotated(Vector3(0,1.0,0), deg_to_rad(-50))
 	$StepUpSeparationRay_L.global_position.x = self.global_position.x + xz_f_ray_pos.x
 	$StepUpSeparationRay_L.global_position.z = self.global_position.z + xz_f_ray_pos.z
 	
-	var xz_r_ray_pos = xz_vel.rotated(Vector3(0,1.0,0), deg_to_rad(50))
+	var xz_r_ray_pos = xz_f_ray_pos.rotated(Vector3(0,1.0,0), deg_to_rad(50))
 	$StepUpSeparationRay_L.global_position.x = self.global_position.x + xz_f_ray_pos.x
 	$StepUpSeparationRay_L.global_position.z = self.global_position.z + xz_f_ray_pos.z
 	
