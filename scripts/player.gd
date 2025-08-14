@@ -75,11 +75,28 @@ func _snap_down_to_stairs_check():
 	_snapped_to_stairs_last_frame = did_snap
 	
 @onready var _initial_seperation_ray_dist =abs($StepUpSeparationRay_F.position.z)
+
+var _last_xz_vel : Vector3 = Vector3(0,0,0)
+
 func _rotate_step_up_seperation_ray():
 	var xz_vel = velocity * Vector3(1,0,1)
+	
+	if xz_vel.length() < 0.1:
+		xz_vel = _last_xz_vel 
+	else:
+		_last_xz_vel = xz_vel
+	
 	var xz_f_ray_pos = xz_vel.normalized() * _initial_seperation_ray_dist
 	$StepUpSeparationRay_F.global_position.x = self.global_position.x + xz_f_ray_pos.x
 	$StepUpSeparationRay_F.global_position.z = self.global_position.z + xz_f_ray_pos.z
+	
+	var xz_l_ray_pos = xz_vel.rotated(Vector3(0,1.0,0), deg_to_rad(-50))
+	$StepUpSeparationRay_L.global_position.x = self.global_position.x + xz_f_ray_pos.x
+	$StepUpSeparationRay_L.global_position.z = self.global_position.z + xz_f_ray_pos.z
+	
+	var xz_r_ray_pos = xz_vel.rotated(Vector3(0,1.0,0), deg_to_rad(50))
+	$StepUpSeparationRay_L.global_position.x = self.global_position.x + xz_f_ray_pos.x
+	$StepUpSeparationRay_L.global_position.z = self.global_position.z + xz_f_ray_pos.z
 	
 	
 func _physics_process(delta): 
