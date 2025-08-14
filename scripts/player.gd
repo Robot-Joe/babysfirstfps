@@ -92,13 +92,32 @@ func _rotate_step_up_seperation_ray():
 
 	var xz_l_ray_pos = xz_f_ray_pos.rotated(Vector3(0,1.0,0), deg_to_rad(-50))
 	$StepUpSeparationRay_L.global_position.x = self.global_position.x + xz_l_ray_pos.x
-	$StepUpSeparationRay_L.global_position.z = self.global_position.z +xz_l_ray_pos.z
+	$StepUpSeparationRay_L.global_position.z = self.global_position.z + xz_l_ray_pos.z
 	
 	var xz_r_ray_pos = xz_f_ray_pos.rotated(Vector3(0,1.0,0), deg_to_rad(50))
-	$StepUpSeparationRay_L.global_position.x = self.global_position.x + xz_r_ray_pos.x
-	$StepUpSeparationRay_L.global_position.z = self.global_position.z +xz_r_ray_pos.z
+	$StepUpSeparationRay_R.global_position.x = self.global_position.x + xz_r_ray_pos.x
+	$StepUpSeparationRay_R.global_position.z = self.global_position.z + xz_r_ray_pos.z
 	
 	
+	$StepUpSeparationRay_F/RayCast3D.force_raycast_update()
+	$StepUpSeparationRay_L/RayCast3D.force_raycast_update()
+	$StepUpSeparationRay_R/RayCast3D.force_raycast_update()
+	var max_slope_ang_dot = Vector3(0,1,0).rotated(Vector3(1.0,0,0), self.floor_max_angle).dot(Vector3(0,1,0))
+	var any_too_steep = false
+	if $StepUpSeparationRay_F/RayCast3D.is_colliding() and $StepUpSeparationRay_F/RayCast3D.get_collision_normal().dot(Vector3(0,1,0)) < max_slope_ang_dot:
+		any_too_steep = true
+	if $StepUpSeparationRay_L/RayCast3D.is_colliding() and $StepUpSeparationRay_L/RayCast3D.get_collision_normal().dot(Vector3(0,1,0)) < max_slope_ang_dot:
+		any_too_steep = true
+	if $StepUpSeparationRay_R/RayCast3D.is_colliding() and $StepUpSeparationRay_R/RayCast3D.get_collision_normal().dot(Vector3(0,1,0)) < max_slope_ang_dot:
+		any_too_steep = true
+	
+	$StepUpSeparationRay_F.disabled = any_too_steep
+	$StepUpSeparationRay_L.disabled = any_too_steep
+	$StepUpSeparationRay_R.disabled = any_too_steep
+	
+var _cur_frame = 0
+@export var _jump_frame_grace = 5
+var _last_frame_was_on_floor = _jump_frame_grace -1
 func _physics_process(delta): 
 	
 	# handle movement state
@@ -123,11 +142,17 @@ func _physics_process(delta):
 		velocity += get_gravity() * delta
 	
 	# Handle jump.
+	
+	_cur_frame += 1
 	if is_on_floor():
-			if Input.is_action_just_pressed("ui_accept") and is_on_floor() and ! bonk_raycast.is_colliding():
+		_last_frame_was_on_floor = _cur_frame
+	
+	if is_on_floor():
+			if Input.is_action_just_pressed("ui_accept") and (is_on_floor() and ! bonk_raycast.is_colliding() or _cur_frame - _last_frame_was_on_floor <= _jump_frame_grace):
 				velocity.y = jump_velocity
 				animation_player.play("Jump")
 	# Handle Landing
+	
 	if is_on_floor():
 		if last_velocity.y < 0.0:
 			animation_player.play("Landing")
