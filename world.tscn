@@ -1,9 +1,9 @@
-[gd_scene load_steps=16 format=3 uid="uid://dfnpswwu1veyf"]
+[gd_scene load_steps=17 format=3 uid="uid://dfnpswwu1veyf"]
 
 [ext_resource type="Texture2D" uid="uid://dd5r733ie51h2" path="res://assets/textures/dev/grids/Dark/texture_07.png" id="1_fj7yv"]
 [ext_resource type="Texture2D" uid="uid://dhqco2efaxapa" path="res://assets/textures/dev/grids/Orange/texture_05.png" id="2_aqk2v"]
 [ext_resource type="Texture2D" uid="uid://dh02u7jhrfggr" path="res://assets/hdris/kloofendal_48d_partly_cloudy_puresky_2k.hdr" id="2_tlwt5"]
-[ext_resource type="Script" uid="uid://usymdixmgddq" path="res://scripts/player.gd" id="3_tlwt5"]
+[ext_resource type="Script" uid="uid://usymdixmgddq" path="res://scripts/player.gd" id="4_aqk2v"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aqk2v"]
 albedo_color = Color(0.605274, 0.605274, 0.605274, 1)
@@ -29,6 +29,9 @@ glow_enabled = true
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tlwt5"]
 height = 1.2
+
+[sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_aqk2v"]
+length = 0.5
 
 [sub_resource type="Animation" id="Animation_aqk2v"]
 resource_name = "Jump"
@@ -121,7 +124,6 @@ _data = {
 }
 
 [node name="World" type="Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0633144, 1.90735e-06, 0.171185)
 
 [node name="stage" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.013422, 0.0339737, -0.0475769)
@@ -132,22 +134,30 @@ use_collision = true
 size = Vector3(50, 1, 50)
 material = SubResource("StandardMaterial3D_aqk2v")
 
+[node name="CSGBox3D4" type="CSGBox3D" parent="stage/CSGBox3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.7339, 0.698467, -4.55758)
+gi_mode = 0
+use_collision = true
+size = Vector3(5.05615, 0.38916, 6.92969)
+material = SubResource("StandardMaterial3D_036b0")
+
 [node name="CSGBox3D2" type="CSGBox3D" parent="stage/CSGBox3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.8061, 2.72424, -18.1889)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.8061, 2.77063, -17.4072)
 use_collision = true
-size = Vector3(5.05615, 1, 10)
+size = Vector3(5.05615, 1.09277, 8.43652)
 material = SubResource("StandardMaterial3D_aqk2v")
 
-[node name="CSGBox3D2" type="CSGBox3D" parent="stage"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.39865, -0.359356, -22.9069)
+[node name="CSGBox3D3" type="CSGBox3D" parent="stage/CSGBox3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.479477, 2.03408, -25.503)
 use_collision = true
-size = Vector3(58.4203, 6.16113, 1.99273)
+size = Vector3(51.6509, 3, 1.99273)
 material = SubResource("StandardMaterial3D_aqk2v")
 
-[node name="CSGBox3D3" type="CSGBox3D" parent="stage"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5816, 0.502516, -4.84906)
+[node name="CSGBox3D4" type="CSGBox3D" parent="stage/CSGBox3D/CSGBox3D3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.211, -0.947022, 16.3878)
+gi_mode = 0
 use_collision = true
-size = Vector3(5.05615, 1, 6.92969)
+size = Vector3(5.43542, 0.38916, 6.92969)
 material = SubResource("StandardMaterial3D_036b0")
 
 [node name="env" type="Node3D" parent="."]
@@ -161,7 +171,7 @@ shadow_enabled = true
 environment = SubResource("Environment_pkg7o")
 
 [node name="Player" type="CharacterBody3D" parent="."]
-script = ExtResource("3_tlwt5")
+script = ExtResource("4_aqk2v")
 
 [node name="standing_collision_shape" type="CollisionShape3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -172,16 +182,25 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.556979, 0)
 shape = SubResource("CapsuleShape3D_tlwt5")
 disabled = true
 
+[node name="StepUpSeparationRay_F" type="CollisionShape3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.5, -0.652526)
+shape = SubResource("SeparationRayShape3D_aqk2v")
+
 [node name="RayCast3D" type="RayCast3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0122032, -0.0174074, 0.0127268)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.017, 0)
 target_position = Vector3(0, 2, 0)
 
 [node name="Head" type="Node3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
 
-[node name="Camera3D" type="Camera3D" parent="Player/Head"]
+[node name="Eyes" type="Node3D" parent="Player/Head"]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Player/Head/Camera3D"]
+[node name="Camera3D" type="Camera3D" parent="Player/Head/Eyes"]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player/Head/Eyes/Camera3D"]
 libraries = {
 &"": SubResource("AnimationLibrary_dwbse")
 }
+
+[node name="StairsBelowRaycast3D" type="RayCast3D" parent="Player"]
+target_position = Vector3(0, -0.5, 0)
