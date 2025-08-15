@@ -20,12 +20,14 @@ var current_speed = 5.0
 @export var crouch_speed = 3.0
 
 # movement vars
-const jump_velocity = 4.5
+@export var jump_velocity = 4.5
 var lerp_speed = 10.0
 var air_lerp_speed = 1.5
 var crouch_depth = -0.5
 var last_velocity = Vector3.ZERO
 var _falling : bool = false
+var falling_timer : float = 0.0
+var distance_fell : float = 0.0
 
 # stair & slope detection vars
 
@@ -138,12 +140,12 @@ func _physics_process(delta):
 		crouching_collision_shape.disabled = true
 		head.position.y = lerp(head.position.y,1.8,delta*lerp_speed)
 	
-	# Add the gravity.
+	# Add the gravity and add to falling timer.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-	
-	# Am I falling?
-	if last_velocity.y < 0.0: _falling = true
+		falling_timer += delta
+		if velocity.y < 0:
+			distance_fell += abs(velocity.y) * delta
 	
 	_cur_frame += 1
 	if is_on_floor():
@@ -155,8 +157,14 @@ func _physics_process(delta):
 		# After landing while falling
 		if _falling:
 			animation_player.play("Landing")
-			_falling = false
-		 
+		_falling = false
+		falling_timer = 0
+		if distance_fell > 0.0: 
+			print("Distance fell: " + str(snapped(distance_fell, 0.01)))
+			distance_fell = 0
+	
+	if falling_timer > 0.5:
+		_falling = true
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
 	var input_dir := Input.get_vector("Left", "Right", "Forward", "Backward")
