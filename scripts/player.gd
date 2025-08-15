@@ -145,13 +145,14 @@ func _physics_process(delta):
 	# Am I falling?
 	if last_velocity.y < 0.0: _falling = true
 	
-	# Handle jump.	
 	_cur_frame += 1
 	if is_on_floor():
 		_last_frame_was_on_floor = _cur_frame
+		# Jumping while on the ground
 		if Input.is_action_just_pressed("ui_accept") and (is_on_floor() and ! bonk_raycast.is_colliding() or _cur_frame - _last_frame_was_on_floor <= _jump_frame_grace):
-			velocity.y += jump_velocity
+			velocity += Vector3.UP * jump_velocity
 			animation_player.play("Jump")
+		# After landing while falling
 		if _falling:
 			animation_player.play("Landing")
 			_falling = false
