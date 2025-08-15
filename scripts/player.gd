@@ -25,6 +25,7 @@ var lerp_speed = 10.0
 var air_lerp_speed = 1.5
 var crouch_depth = -0.5
 var last_velocity = Vector3.ZERO
+var _falling : bool = false
 
 # stair & slope detection vars
 
@@ -141,21 +142,19 @@ func _physics_process(delta):
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 	
-	# Handle jump.
+	# Am I falling?
+	if last_velocity.y < 0.0: _falling = true
 	
+	# Handle jump.	
 	_cur_frame += 1
 	if is_on_floor():
 		_last_frame_was_on_floor = _cur_frame
-	
-	if is_on_floor():
-			if Input.is_action_just_pressed("ui_accept") and (is_on_floor() and ! bonk_raycast.is_colliding() or _cur_frame - _last_frame_was_on_floor <= _jump_frame_grace):
-				velocity.y = jump_velocity
-				animation_player.play("Jump")
-	# Handle Landing
-	
-	if is_on_floor():
-		if last_velocity.y < 0.0:
+		if Input.is_action_just_pressed("ui_accept") and (is_on_floor() and ! bonk_raycast.is_colliding() or _cur_frame - _last_frame_was_on_floor <= _jump_frame_grace):
+			velocity.y += jump_velocity
+			animation_player.play("Jump")
+		if _falling:
 			animation_player.play("Landing")
+			_falling = false
 		 
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
@@ -190,7 +189,6 @@ func _physics_process(delta):
 	_snap_down_to_stairs_check()
 	
 	#handle headbob
-	
 	t_bob += delta * velocity.length() * float(is_on_floor())
 	eyes.transform.origin = _headbob(t_bob)
 	last_velocity = velocity
