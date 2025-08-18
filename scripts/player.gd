@@ -3,12 +3,12 @@ extends CharacterBody3D
 # player nodes
 
 @onready var head: Node3D = $Head
-@onready var eyes: Node3D = $Head/Eyes
-@onready var camera_3d: Camera3D = $Head/Eyes/Camera3D
+@onready var eyes: Node3D = $Head/CameraSmooth/Eyes
+@onready var camera_3d: Camera3D = $Head/CameraSmooth/Eyes/Camera3D
 @onready var standing_collision_shape: CollisionShape3D = $standing_collision_shape
 @onready var crouching_collision_shape: CollisionShape3D = $crouching_collision_shape
 @onready var bonk_raycast: RayCast3D = $RayCast3D
-@onready var animation_player: AnimationPlayer = $Head/Eyes/Camera3D/AnimationPlayer
+@onready var animation_player: AnimationPlayer = $Head/CameraSmooth/Eyes/Camera3D/AnimationPlayer
 
 
 # speed vars
@@ -20,6 +20,7 @@ var current_speed = 5.0
 @export var crouch_speed = 3.0
 
 # movement vars
+
 @export var jump_velocity = 4.5
 var lerp_speed = 10.0
 var air_lerp_speed = 1.5
@@ -29,14 +30,15 @@ var _falling : bool = false
 var falling_timer : float = 0.0
 var distance_fell : float = 0.0
 
-# stair & slope detection vars
 
 #head tilt vars
+
 var camera_tilt_left = 1.5
 var camera_tilt_right = -1.5
 var _lerp_angle = 6
 
 # head bob vars
+
 const bob_freq = 2.0
 const bob_amp = 0.08
 var t_bob = 0.0
@@ -45,6 +47,9 @@ var t_bob = 0.0
 
 var direction = Vector3.ZERO
 const mouse_sens = 0.4
+
+# Smooth Camera stuff
+
 
 func _ready():	
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -57,6 +62,7 @@ func _input(event):
 		head.rotation.x = clamp(head.rotation.x,deg_to_rad(-89),deg_to_rad (89))
 	
 	# stairs logic
+	
 var _was_on_floor_last_frame = false
 var _snapped_to_stairs_last_frame = false
 func _snap_down_to_stairs_check():
@@ -72,8 +78,7 @@ func _snap_down_to_stairs_check():
 			self.position.y += translate_y
 			apply_floor_snap()
 			did_snap = true
-		
-		
+
 	_was_on_floor_last_frame = is_on_floor()
 	_snapped_to_stairs_last_frame = did_snap
 	

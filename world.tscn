@@ -177,6 +177,7 @@ shadow_enabled = true
 environment = SubResource("Environment_pkg7o")
 
 [node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.79334, 0, -4.11857)
 script = ExtResource("4_aqk2v")
 
 [node name="standing_collision_shape" type="CollisionShape3D" parent="Player"]
@@ -189,7 +190,7 @@ shape = SubResource("CapsuleShape3D_tlwt5")
 disabled = true
 
 [node name="StepUpSeparationRay_F" type="CollisionShape3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.5, -0.652526)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.5, -0.710818)
 shape = SubResource("SeparationRayShape3D_aqk2v")
 
 [node name="RayCast3D" type="RayCast3D" parent="Player/StepUpSeparationRay_F"]
@@ -198,7 +199,7 @@ enabled = false
 target_position = Vector3(0, -0.55, 0)
 
 [node name="StepUpSeparationRay_L" type="CollisionShape3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.5, -0.652526)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.5, -0.710818)
 shape = SubResource("SeparationRayShape3D_aqk2v")
 
 [node name="RayCast3D" type="RayCast3D" parent="Player/StepUpSeparationRay_L"]
@@ -207,7 +208,7 @@ enabled = false
 target_position = Vector3(0, -0.55, 0)
 
 [node name="StepUpSeparationRay_R" type="CollisionShape3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.5, -0.652526)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.5, -0.710818)
 shape = SubResource("SeparationRayShape3D_aqk2v")
 
 [node name="RayCast3D" type="RayCast3D" parent="Player/StepUpSeparationRay_R"]
@@ -222,11 +223,14 @@ target_position = Vector3(0, 2, 0)
 [node name="Head" type="Node3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
 
-[node name="Eyes" type="Node3D" parent="Player/Head"]
+[node name="CameraSmooth" type="Node3D" parent="Player/Head"]
+unique_name_in_owner = true
 
-[node name="Camera3D" type="Camera3D" parent="Player/Head/Eyes"]
+[node name="Eyes" type="Node3D" parent="Player/Head/CameraSmooth"]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Player/Head/Eyes/Camera3D"]
+[node name="Camera3D" type="Camera3D" parent="Player/Head/CameraSmooth/Eyes"]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player/Head/CameraSmooth/Eyes/Camera3D"]
 libraries = {
 &"": SubResource("AnimationLibrary_dwbse")
 }
